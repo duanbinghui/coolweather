@@ -1,6 +1,7 @@
 package com.coolweather.android;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ public class ChooseAreaFragment extends Fragment {
     private List<String> dataList = new ArrayList<>();
     /**
      * 省列表
-     14.4 遍历全国省市县数据
+     * 14.4 遍历全国省市县数据
      */
     private List<Province> provinceList;
     /**
@@ -64,6 +65,7 @@ public class ChooseAreaFragment extends Fragment {
      * 当前选中的级别
      */
     private int currentLevel;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,6 +91,13 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.
+                            class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -104,6 +113,7 @@ public class ChooseAreaFragment extends Fragment {
         });
         queryProvinces();
     }
+
     /**
      * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询
      */
@@ -124,6 +134,7 @@ public class ChooseAreaFragment extends Fragment {
             queryFromServer(address, "province");
         }
     }
+
     /**
      * 查询选中省内所有的市，优先从数据库查询，如果没有查询到再去服务器上查询
      */
@@ -145,6 +156,7 @@ public class ChooseAreaFragment extends Fragment {
             queryFromServer(address, "city");
         }
     }
+
     /**
      * 查询选中市内所有的县，优先从数据库查询，如果没有查询到再去服务器上查询
      */
@@ -169,6 +181,7 @@ public class ChooseAreaFragment extends Fragment {
             queryFromServer(address, "county");
         }
     }
+
     /**
      * 根据传入的地址和类型从服务器上查询省市县数据
      */
@@ -204,9 +217,10 @@ public class ChooseAreaFragment extends Fragment {
                     });
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
-// 通过 runOnUiThread()方法回到主线程处理逻辑
+                // 通过 runOnUiThread()方法回到主线程处理逻辑
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -229,6 +243,7 @@ public class ChooseAreaFragment extends Fragment {
         }
         progressDialog.show();
     }
+
     /**
      * 关闭进度对话框
      */
